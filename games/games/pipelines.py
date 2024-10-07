@@ -6,12 +6,9 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-
-
-class GamesPipeline:
-    def process_item(self, item, spider):
-        return item
-
+import pymongo
+import hashlib
+from scrapy.exceptions import DropItem
 
 class MongoPipeline:
     COLLECTION_NAME = "items"
@@ -35,5 +32,15 @@ class MongoPipeline:
         self.client.close()
 
     def process_item(self, item, spider):
-        self.db[self.COLLECTION_NAME].insert_one(ItemAdapter(item).asdict())
-        return item
+        id = self.get_item_id(item)
+        
+        if self.db[self.COLLECTION_NAME].find_one({"_id": id}):
+            raise DropItem(f"Duplicate Item: {item['title']}")
+        else:
+            item['_id'] = id
+            self.db[self.COLLECTION_NAME].insert_one(ItemAdapter(item).asdict())
+            print("Novo Item Salvo na base de dados")
+            return item
+    
+    def get_item_id(self, item):
+        return hashlib.sha256(item['title'].encode("utf-8")).hexdigest()

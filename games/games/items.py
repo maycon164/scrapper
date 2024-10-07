@@ -9,6 +9,7 @@ import scrapy
 class GamesItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    _id = scrapy.Field()
     title = scrapy.Field()
     price = scrapy.Field()
     image = scrapy.Field()
