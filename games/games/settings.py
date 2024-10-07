@@ -96,3 +96,5 @@ FEED_EXPORT_ENCODING = "utf-8"
 
 MONGO_URI = "mongodb://root:example@localhost:27017"
 MONGO_DATABASE = "scraper"
+
+ROBOTSTXT_OBEY = False
