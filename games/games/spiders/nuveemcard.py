@@ -16,7 +16,7 @@ class NuveemSpider(scrapy.Spider):
         for item in items:
             register = GamesItem()
             register["title"] = item.css("h3.product-title::text").get().strip()
-            register["price"] = f'R$ {item.css("span.integer::text").get()}{item.css("span.decimal::text").get()}'
+            register["price"] = float(f'{item.css("span.integer::text").get()}{item.css("span.decimal::text").get()}'.replace(",", ".").strip())
             register["image"] = item.css("div.product-img > img::attr(src)").get()
 
             percentage = item.css("span.product-discount::text").get()
@@ -30,7 +30,7 @@ class NuveemSpider(scrapy.Spider):
 
         current_page = int(response.css("a.pagination--item-active::text").get())
 
-        if current_page == 10:
+        if current_page == 4:
             return
                 
         next_page_url = response.urljoin(f"/br-en/catalog/platforms/pc/page/{str(current_page + 1)}")
